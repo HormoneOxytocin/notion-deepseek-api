@@ -1,11 +1,10 @@
-from flask import Request, jsonify
 import base64
 import requests
 
-def handler(request: Request):
+def handler(request):
     try:
-        req_json = request.get_json()
-        image_base64 = req_json["image_base64"]
+        body = request.json()
+        image_base64 = body.get("image_base64")
 
         headers = {
             "Authorization": "Bearer sk-9055d64ab7764e3eb33333a331e4beef",
@@ -13,6 +12,7 @@ def handler(request: Request):
         }
 
         prompt = "请识别截图中的支付信息，包括：金额、时间、方式、交易对象、备注，输出 JSON 格式。"
+
         payload = {
             "model": "deepseek-coder-v1.5",
             "messages": [
@@ -32,11 +32,21 @@ def handler(request: Request):
             "temperature": 0.2
         }
 
-        response = requests.post("https://api.deepseek.com/v1/chat/completions", json=payload, headers=headers)
+        response = requests.post("https://api.deepseek.com/v1/chat/completions", headers=headers, json=payload)
         output = response.json()
+        content = output["choices"][0]["message"]["content"]
 
-        result = output["choices"][0]["message"]["content"]
-        return jsonify({"parsed": result})
+        return {
+            "statusCode": 200,
+            "body": {
+                "parsed": content
+            }
+        }
 
     except Exception as e:
-        return jsonify({"error": str(e)})
+        return {
+            "statusCode": 500,
+            "body": {
+                "error": str(e)
+            }
+        }
