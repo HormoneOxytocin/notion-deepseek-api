@@ -33,13 +33,12 @@ def handler(request):
         }
 
         response = requests.post("https://api.deepseek.com/v1/chat/completions", headers=headers, json=payload)
-        output = response.json()
-        content = output["choices"][0]["message"]["content"]
+        result = response.json()["choices"][0]["message"]["content"]
 
         return {
             "statusCode": 200,
             "body": {
-                "parsed": content
+                "parsed": result
             }
         }
 
