@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "api/parse-screenshot.py": {
+      "runtime": "python3.9"
+    }
+  },
+  "routes": [
+    {
+      "src": "/parse-screenshot",
+      "dest": "api/parse-screenshot.py"
+    }
+  ]
+}
