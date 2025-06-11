@@ -1,9 +1,16 @@
 import requests
+import json
 
 def handler(request):
     try:
-        body = request.json()
+        body = json.loads(request.body)
         image_base64 = body.get("image_base64")
+
+        if not image_base64:
+            return {
+                "statusCode": 400,
+                "body": json.dumps({"error": "Missing image_base64"})
+            }
 
         headers = {
             "Authorization": "Bearer sk-9055d64ab7764e3eb33333a331e4beef",
@@ -36,15 +43,11 @@ def handler(request):
 
         return {
             "statusCode": 200,
-            "body": {
-                "parsed": result
-            }
+            "body": json.dumps({"parsed": result})
         }
 
     except Exception as e:
         return {
             "statusCode": 500,
-            "body": {
-                "error": str(e)
-            }
+            "body": json.dumps({"error": str(e)})
         }
